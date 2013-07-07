@@ -50,6 +50,7 @@ namespace GitScrobbler
       // Keep some statistics about scrobbled tracks.
       Dictionary<string, int> artists = new Dictionary<string,int>();
       Dictionary<Tuple<string, string>, int> tracks = new Dictionary<Tuple<string,string>,int>();
+      int totalScrobbles = 0;
 
       Console.WriteLine("Scrobbles");
       Console.WriteLine("=========");
@@ -87,6 +88,7 @@ namespace GitScrobbler
           if (!tracks.ContainsKey(tuple)) tracks[tuple] = 0;
           artists[artist]++;
           tracks[tuple]++;
+          totalScrobbles++;
         }
       }
 
@@ -108,6 +110,11 @@ namespace GitScrobbler
       {
         Console.WriteLine("{0} — {1} ({2} commits)", kvp.Key.Item1, kvp.Key.Item2, kvp.Value);
       }
+      Console.WriteLine();
+
+      Console.WriteLine("Coverage");
+      Console.WriteLine("========");
+      Console.WriteLine("{0:0.0%} of the commits was matched to a scrobble.", (double)totalScrobbles / commits.Count());
       Console.WriteLine();
     }
 
