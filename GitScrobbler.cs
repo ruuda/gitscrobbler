@@ -1,11 +1,12 @@
 // GitScrobbler -- Cross-reference commit history with your Last.fm scrobbles
 // Written in 2013 by Ruud van Asseldonk
 //
-// To the extent possible under law, the author has dedicated all copyright
-// and related and neighboring rights to this software to the public domain worldwide.
+// To the extent possible under law, the author has dedicated all copyright and
+// related and neighboring rights to this software to the public domain worldwide.
 // This software is distributed without any warranty. 
 //
-// See the CC0 Public Domain Dedication at <https://creativecommons.org/publicdomain/zero/1.0/>.
+// You should have received a copy of the CC0 Public Domain Dedication along with
+// this software. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
 
 using System;
 using System.Collections.Generic;
