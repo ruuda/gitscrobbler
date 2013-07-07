@@ -10,8 +10,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
 using System.Xml.Linq;
 
 namespace GitScrobbler
@@ -20,7 +18,7 @@ namespace GitScrobbler
   {
     static void Main(string[] args)
     {
-      // Get Last.fm API key and username as args
+      // Get Last.fm API key and username as args.
       string apiKey   = null;
       string username = null;
 
@@ -32,12 +30,13 @@ namespace GitScrobbler
 
       if (apiKey == null || username == null)
       {
+        Console.WriteLine("GitScrobbler -- Cross-reference commit history with your Last.fm scrobbles");
         Console.WriteLine("Usage: ");
         Console.WriteLine("git log --format='%at %h %s' | gitscrobbler --username <your-last.fm-username> --apikey <your-last.fm-api-key>");
         return;
       }
 
-      // Read the commit log from standard input, and parse the messages
+      // Read the commit log from standard input, and parse the messages.
       var commits = GetLog()
       .Select(x => x.Split(new char[] { ' ' }, 3))
       .Select(x => new
@@ -54,9 +53,9 @@ namespace GitScrobbler
       Console.WriteLine("Scrobbles");
       Console.WriteLine("=========");
 
-      commits.Subscribe(commit =>
+      foreach (var commit in commits)
       {
-        // Retrieve and parse a few scrobbles from Last.fm
+        // Retrieve and parse a few scrobbles from Last.fm.
         var scrobbles = GetScrobbles(username, commit.Timestamp, apiKey)
           .Where(x => x.Attribute("nowplaying") == null)
           .Select(x => new
@@ -67,12 +66,12 @@ namespace GitScrobbler
             Duration = GetTrackDuration(x.Element("mbid").Value, apiKey)
           });
 
-        // Find the one that was within the correct time frame
+        // Find the one that was within the correct time frame.
         var closestMatch = scrobbles
           .OrderByDescending(s => s.Timestamp)
           .FirstOrDefault(s => s.Timestamp <= commit.Timestamp && s.Timestamp + s.Duration >= commit.Timestamp);
 
-        // If any scrobble matched, print it and store statistics
+        // If any scrobble matched, print it and store statistics.
         if (closestMatch != null)
         {
           string artist = closestMatch.Artist;
@@ -88,9 +87,9 @@ namespace GitScrobbler
           artists[artist]++;
           tracks[tuple]++;
         }
-      });
+      }
 
-      // And when all commits have been processed, print statistics
+      // And when all commits have been processed, print statistics.
       var topArtists = artists.OrderByDescending(kvp => kvp.Value);
       var topTracks = tracks.OrderByDescending(kvp => kvp.Value);
 
@@ -111,27 +110,26 @@ namespace GitScrobbler
       Console.WriteLine();
     }
 
-    static IObservable<string> GetLog()
+    static IEnumerable<string> GetLog()
     {
-      // Observable that produces lines from the standard input
-      return Observable.Create<string>(observer =>
+      List<string> lines = new List<string>();
+      string line;
+
+      // Read all lines from standard input.
+      while ((line = Console.ReadLine()) != null)
       {
-        string line;
-        while ((line = Console.ReadLine()) != null)
-        {
-          observer.OnNext(line);
-        }
-        observer.OnCompleted();
-        return Disposable.Empty;
-      });
+        lines.Add(line);
+      }
+
+      return lines;
     }
 
     static IEnumerable<XElement> GetScrobbles(string username, long timestamp, string apiKey)
     {
       try
       {
-        long from = timestamp - 60 * 10; // Started listining from ten minutes before the commit
-        long to = timestamp + 10; // To ten seconds after the commit
+        long from = timestamp - 60 * 10; // Started listining from ten minutes before the commit,
+        long to = timestamp + 10;        // to ten seconds after the commit.
 
         string url = String.Format(
           "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={0}&from={1}&to={2}&api_key={3}",
@@ -153,7 +151,7 @@ namespace GitScrobbler
          "http://ws.audioscrobbler.com/2.0/?method=track.getInfo&mbid={0}&api_key={1}",
          mbid, apiKey);
 
-        // Duration seems to be in milliseconds, convert it to seconds
+        // Duration seems to be in milliseconds, convert it to seconds.
         return int.Parse(XDocument.Load(url).Root.Element("track").Element("duration").Value) / 1000;
       }
       catch
@@ -164,7 +162,7 @@ namespace GitScrobbler
 
     static DateTime FromTimestamp(long timestamp)
     {
-      // Convert unix timestamp to a DateTime
+      // Convert unix timestamp to a DateTime.
       DateTime epoch = new DateTime(1970, 1, 1, 00, 00, 00);
       return epoch.AddSeconds(timestamp);
     }
