@@ -2,7 +2,7 @@ GitScrobbler
 ============
 
 Cross-reference commit history with your Last.fm scrobbles.
-Released into the [public docmain](https://creativecommons.org/publicdomain/zero/1.0/).
+Released into the [public domain](https://creativecommons.org/publicdomain/zero/1.0/).
 
 Usage
 -----
