@@ -45,7 +45,8 @@ namespace GitScrobbler
         Timestamp = long.Parse(x[0]),
         Hash = x[1],
         Message = x[2]
-      });
+      })
+      .ToArray(); // GetLog is not pure, evaluate it once.
 
       // Keep some statistics about scrobbled tracks.
       Dictionary<string, int> artists = new Dictionary<string,int>();
@@ -120,16 +121,13 @@ namespace GitScrobbler
 
     static IEnumerable<string> GetLog()
     {
-      List<string> lines = new List<string>();
       string line;
 
       // Read all lines from standard input.
       while ((line = Console.ReadLine()) != null)
       {
-        lines.Add(line);
+        yield return line;
       }
-
-      return lines;
     }
 
     static IEnumerable<XElement> GetScrobbles(string username, long timestamp, string apiKey)
