@@ -49,8 +49,8 @@ namespace GitScrobbler
       .ToArray(); // GetLog is not pure, evaluate it once.
 
       // Keep some statistics about scrobbled tracks.
-      Dictionary<string, int> artists = new Dictionary<string,int>();
-      Dictionary<Tuple<string, string>, int> tracks = new Dictionary<Tuple<string,string>,int>();
+      var artists = new Dictionary<string,int>();
+      var tracks = new Dictionary<Tuple<string,string>,int>();
       int totalScrobbles = 0;
 
       Console.WriteLine("Scrobbles");
@@ -77,9 +77,9 @@ namespace GitScrobbler
         // If any scrobble matched, print it and store statistics.
         if (closestMatch != null)
         {
-          string artist = closestMatch.Artist;
-          string track = closestMatch.Track;
-          var tuple = Tuple.Create(track, artist);
+          var artist = closestMatch.Artist;
+          var track  = closestMatch.Track;
+          var tuple  = Tuple.Create(track, artist);
 
           Console.WriteLine("{0} {1}", commit.Hash, commit.Message);
           Console.WriteLine("{0} {1} — {2}", FromTimestamp(commit.Timestamp).ToString("yyyy-MM-dd HH:mm"), track, artist);
