@@ -1,5 +1,5 @@
 // GitScrobbler -- Cross-reference commit history with your Last.fm scrobbles
-// Written in 2013 by Ruud van Asseldonk
+// Written in 2013 and 2014 by Ruud van Asseldonk
 //
 // To the extent possible under law, the author has dedicated all copyright and
 // related and neighboring rights to this software to the public domain worldwide.
@@ -39,14 +39,14 @@ namespace GitScrobbler
 
       // Read the commit log from standard input, and parse the messages.
       var commits = GetLog()
-      .Select(x => x.Split(new char[] { ' ' }, 3))
-      .Select(x => new
-      {
-        Timestamp = long.Parse(x[0]),
-        Hash = x[1],
-        Message = x[2]
-      })
-      .ToArray(); // GetLog is not pure, evaluate it once.
+        .Select(x => x.Split(new char[] { ' ' }, 3))
+        .Select(x => new
+        {
+          Timestamp = long.Parse(x[0]),
+          Hash = x[1],
+          Message = x[2]
+        })
+        .ToArray(); // GetLog is not pure, evaluate it once.
 
       // Keep some statistics about scrobbled tracks.
       var artists = new Dictionary<string,int>();
@@ -72,7 +72,8 @@ namespace GitScrobbler
         // Find the one that was within the correct time frame.
         var closestMatch = scrobbles
           .OrderByDescending(s => s.Timestamp)
-          .FirstOrDefault(s => s.Timestamp <= commit.Timestamp && s.Timestamp + s.Duration >= commit.Timestamp);
+          .FirstOrDefault(s => s.Timestamp <= commit.Timestamp &&
+                               s.Timestamp + s.Duration >= commit.Timestamp);
 
         // If any scrobble matched, print it and store statistics.
         if (closestMatch != null)
