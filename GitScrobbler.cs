@@ -39,7 +39,7 @@ namespace GitScrobbler
 
       // Read the commit log from standard input, and parse the messages.
       var commits = GetLog()
-        .Select(x => x.Split(new char[] { ' ' }, 3))
+        .Select(x => x.Split(new [] { ' ' }, 3))
         .Select(x => new
         {
           Timestamp = long.Parse(x[0]),
