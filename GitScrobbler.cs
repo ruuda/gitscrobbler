@@ -10,7 +10,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace GitScrobbler
@@ -161,10 +164,9 @@ namespace GitScrobbler
         // Duration seems to be in milliseconds, convert it to seconds.
         return int.Parse(XDocument.Load(url).Root.Element("track").Element("duration").Value) / 1000;
       }
-      catch
-      {
-        return -1;
-      }
+      catch (SecurityException) { return -1; }
+      catch (FileNotFoundException) { return -1; }
+      catch (XmlException) { return -1; }
     }
 
     static DateTime FromTimestamp(long timestamp)
